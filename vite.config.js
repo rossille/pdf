@@ -14,7 +14,7 @@ export default defineConfig(async () => {
   const codeVersionId = await getCodeVersionId()
 
   return {
-    base: './',
+    base: './pdf/',
     plugins: [
       react({
         jsxImportSource: '@emotion/react',
