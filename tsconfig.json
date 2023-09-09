@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES2019",
+      "ES2021",
+      "ES2022.Error",
+      "ES2022.Object",
+      "ES2023.Array"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "verbatimModuleSyntax": true,
+    "types": [
+      "vite/client",
+      "@emotion/react/types/css-prop"
+    ],
+    "experimentalDecorators": true
+  },
+  "include": [
+    "src"
+  ]
+}
