@@ -14,6 +14,7 @@ export default defineConfig(async () => {
   const codeVersionId = await getCodeVersionId()
 
   return {
+    base: './',
     plugins: [
       react({
         jsxImportSource: '@emotion/react',
