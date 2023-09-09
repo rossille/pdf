@@ -10,7 +10,7 @@ on:
       - 'main'
 
 jobs:
-  destroy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
