@@ -1,29 +1,7 @@
-import { css } from '@emotion/react'
-import { Typography } from '@mui/material'
-import { memo, StrictMode } from 'react'
+import { StrictMode } from 'react'
 
 import { createRoot } from 'react-dom/client'
-
-const App = memo(function App() {
-  return (
-    <div
-      css={css`
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      `}
-    >
-      <Typography className="rotating" variant="h4">
-        Yo
-      </Typography>
-    </div>
-  )
-})
+import { App } from './components/app'
 
 const container = document.getElementById('react-root')
 if (!container) {
