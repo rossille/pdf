@@ -18,6 +18,19 @@ export const App = memo(function App() {
     setPages((pages) => pages.filter((page) => !pageToRemove.includes(page)))
   }, [])
 
+  const handlePageMoved = useCallback((movedPageId: number, afterPageId: number | null) => {
+    setPages((pages) => {
+      const removalIndex = pages.findIndex((page) => page.id === movedPageId)
+      const insertionIndex = afterPageId === null ? 0 : pages.findIndex((page) => page.id === afterPageId) + 1
+      const insertedIndex = insertionIndex > removalIndex ? insertionIndex - 1 : insertionIndex
+      // alert('Remove page at index ' + removalIndex + ' and insert it at index ' + insertedIndex)
+      pages = [...pages]
+      const [movedPage] = pages.splice(removalIndex, 1)
+      pages.splice(insertedIndex, 0, movedPage)
+      return pages
+    })
+  }, [])
+
   const downloadMerged = useCallback(() => {
     mergeAndDownload(pages).catch((err) => {
       console.error(err)
@@ -47,7 +60,7 @@ export const App = memo(function App() {
         }
       `}
     >
-      <PageList pages={pages} onPagesRemoved={handlePagesRemoved} />
+      <PageList pages={pages} onPagesRemoved={handlePagesRemoved} onPageMoved={handlePageMoved} />
       <div
         css={css`
           position: fixed;

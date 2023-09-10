@@ -1,18 +1,19 @@
 import { css } from '@emotion/react'
 import { PDFDocument } from 'pdf-lib'
 import type { PDFDocumentLoadingTask, RenderTask } from 'pdfjs-dist'
-import { memo, useEffect, useRef } from 'react'
+import { memo, useCallback, useEffect, useRef, type DragEvent } from 'react'
 import { assert } from '../lib/assert'
 import { createDeferred, type Deferred } from '../lib/deferred'
 import { getPdfJs } from '../lib/pdf-js'
+import { gap, pageHeight } from '../lib/spaces'
 import type { Page } from '../lib/types'
 
 type PageCardProps = {
   page: Page
   scale: number
-  className?: string
+  onPageMoved: (movedPageId: number, afterPageId: number) => void
 }
-export const PageCard = memo<PageCardProps>(function PageCard({ page, scale, className }) {
+export const PageCard = memo<PageCardProps>(function PageCard({ page, scale, onPageMoved }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const pageScale = pageHeight / page.height
 
@@ -97,19 +98,86 @@ export const PageCard = memo<PageCardProps>(function PageCard({ page, scale, cla
     return dispose
   }, [page, width])
 
+  const handleDragStart = useCallback(
+    (event: DragEvent<HTMLCanvasElement>) => {
+      event.dataTransfer.setData('page', page.id.toString())
+      const div = event.target as HTMLCanvasElement
+      div.classList.add('dragging')
+    },
+    [page],
+  )
+
+  const handleDragEnd = useCallback((event: DragEvent<HTMLCanvasElement>) => {
+    const div = event.target as HTMLCanvasElement
+    div.classList.remove('dragging')
+  }, [])
+
+  const handleDragOverSide = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+  }, [])
+
+  const handleDragEnterSide = useCallback((event: DragEvent<HTMLDivElement>) => {
+    const div = event.target as HTMLDivElement
+    div.classList.add('dragover')
+  }, [])
+
+  const handleDragLeaveSide = useCallback((event: DragEvent<HTMLDivElement>) => {
+    const div = event.target as HTMLDivElement
+    div.classList.remove('dragover')
+  }, [])
+
+  const handleDropAfter = useCallback(
+    (event: DragEvent<HTMLDivElement>) => {
+      const droppedPageIdStr = event.dataTransfer.getData('page')
+      const droppedPageId = parseInt(droppedPageIdStr, 10)
+      const div = event.target as HTMLDivElement
+      div.classList.remove('dragover')
+      onPageMoved(droppedPageId, page.id)
+    },
+    [onPageMoved, page.id],
+  )
+
   return (
-    <canvas
-      ref={canvasRef}
+    <div
       css={css`
-        border: 1px solid black;
+        position: relative;
       `}
-      width={width}
-      height={height}
-    />
+    >
+      <canvas
+        draggable
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        ref={canvasRef}
+        css={css`
+          border: 1px solid black;
+          cursor: move;
+          &.dragging {
+            opacity: 0.1;
+          }
+        `}
+        width={width}
+        height={height}
+      />
+      <div
+        css={css`
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 100%;
+          width: ${gap}px;
+          &.dragover {
+            background-color: pink;
+          }
+        `}
+        onDragOver={handleDragOverSide}
+        onDragEnter={handleDragEnterSide}
+        onDragLeave={handleDragLeaveSide}
+        onDrop={handleDropAfter}
+      />
+    </div>
   )
 })
-
-const pageHeight = 200
 
 let currentLock: Deferred<undefined> | undefined = undefined
 

@@ -1,6 +1,7 @@
 import { css } from '@emotion/react'
 import { Button, type ButtonProps } from '@mui/material'
 import { memo, useCallback } from 'react'
+import { gap } from '../lib/spaces'
 import type { Page } from '../lib/types'
 import { PageCard } from './page-card'
 
@@ -8,15 +9,16 @@ type PageListProps = {
   pages: Page[]
   className?: string
   onPagesRemoved: (pages: Page[]) => void
+  onPageMoved: (movedPageId: number, afterPageId: number) => void
 }
-export const PageList = memo<PageListProps>(function PageList({ pages, className, onPagesRemoved }) {
+export const PageList = memo<PageListProps>(function PageList({ pages, className, onPagesRemoved, onPageMoved }) {
   const onPageRemoved = useCallback((page: Page) => onPagesRemoved([page]), [onPagesRemoved])
 
   return (
     <div
       css={css`
         display: flex;
-        gap: 16px;
+        gap: ${gap}px;
         flex-wrap: wrap;
       `}
       className={className}
@@ -36,7 +38,7 @@ export const PageList = memo<PageListProps>(function PageList({ pages, className
             }
           `}
         >
-          <PageCard page={page} scale={1} />
+          <PageCard page={page} scale={1} onPageMoved={onPageMoved} />
           <PageActionBar page={page} onPageRemoved={onPageRemoved} />
         </div>
       ))}
