@@ -1,1 +1,1 @@
-Simple PDF manipulation utility
+Simple PDF manipulation utility : https://rossille.github.io/pdf/
