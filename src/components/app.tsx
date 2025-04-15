@@ -1,6 +1,8 @@
 import { css } from '@emotion/react'
 import { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useState } from 'react'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import { assert } from '../lib/assert'
 import { DocumentsList } from './documents-list'
 import { FileInputForm } from './file-input-form'
@@ -25,43 +27,45 @@ export const App = memo(function App() {
   }, [pdfDocuments])
 
   return (
-    <div
-      css={css`
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow-x: hidden;
-        overflow-y: scroll;
-        padding: 20px;
-        scrollbar-width: thin;
-        ::-webkit-scrollbar {
-          width: 5px;
-          height: 5px;
-          background-color: lightgray;
-        }
-        ::-webkit-scrollbar-thumb {
-          background-color: gray;
-        }
-      `}
-    >
-      <DocumentsList documents={pdfDocuments} onDocumentRemoved={handleDocumentRemoved} />
+    <DndProvider backend={HTML5Backend}>
       <div
         css={css`
           position: fixed;
-          bottom: 20px;
-          right: 25px;
-          display: flex;
-          gap: 10px;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          overflow-x: hidden;
+          overflow-y: scroll;
+          padding: 20px;
+          scrollbar-width: thin;
+          ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+            background-color: lightgray;
+          }
+          ::-webkit-scrollbar-thumb {
+            background-color: gray;
+          }
         `}
       >
-        <FileInputForm onDocumentAdded={handleDocumentAdded} />
-        <RoundButton disabled={pdfDocuments.length === 0} onClick={downloadMerged}>
-          ⬇
-        </RoundButton>
+        <DocumentsList documents={pdfDocuments} onDocumentRemoved={handleDocumentRemoved} onReorder={setPdfDocuments} />
+        <div
+          css={css`
+            position: fixed;
+            bottom: 20px;
+            right: 25px;
+            display: flex;
+            gap: 10px;
+          `}
+        >
+          <FileInputForm onDocumentAdded={handleDocumentAdded} />
+          <RoundButton disabled={pdfDocuments.length === 0} onClick={downloadMerged}>
+            ⬇
+          </RoundButton>
+        </div>
       </div>
-    </div>
+    </DndProvider>
   )
 })
 

@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import type { PDFDocument } from 'pdf-lib'
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import { newId } from '../lib/id'
 import { gap } from '../lib/spaces'
 import { DocumentCard } from './document-card'
@@ -9,6 +9,7 @@ type DocumentsListProps = {
   documents: PDFDocument[]
   className?: string
   onDocumentRemoved: (document: PDFDocument) => void
+  onReorder: (documents: PDFDocument[]) => void
 }
 
 const idsMap = new Map<PDFDocument, number>()
@@ -22,7 +23,22 @@ function getDocumentId(pdfDocument: PDFDocument): number {
 }
 
 
-export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({ documents, className, onDocumentRemoved }) {
+export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({ 
+  documents, 
+  className, 
+  onDocumentRemoved,
+  onReorder 
+}) {
+  const moveDocument = useCallback((dragIndex: number, hoverIndex: number) => {
+    onReorder(
+      documents.map((_, idx, array) => {
+        if (idx === hoverIndex) return array[dragIndex]
+        if (idx === dragIndex) return array[hoverIndex]
+        return array[idx]
+      })
+    )
+  }, [documents, onReorder])
+
   return (
     <div
       css={css`
@@ -39,7 +55,7 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({ d
       `}
       className={className}
     >
-      {documents.map((pdfDocument) => (
+      {documents.map((pdfDocument, index) => (
         <div
           key={getDocumentId(pdfDocument)}
           css={css`
@@ -54,7 +70,12 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({ d
             }
           `}
         >
-          <DocumentCard pdfDocument={pdfDocument} scale={1} />
+          <DocumentCard 
+            pdfDocument={pdfDocument} 
+            scale={1} 
+            index={index}
+            moveDocument={moveDocument} 
+          />
         </div>
       ))}
     </div>
