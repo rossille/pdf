@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import { PDFDocument } from 'pdf-lib'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { Page } from '../lib/page'
 import { PageCard } from './page-card'
@@ -20,11 +20,11 @@ type DocumentCardProps = {
   moveDocument: (dragIndex: number, hoverIndex: number) => void
 }
 
-export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({ 
-  pdfDocument, 
-  scale, 
+export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
+  pdfDocument,
+  scale,
   index,
-  moveDocument 
+  moveDocument
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState<{width: number, height: number}|undefined>(undefined)
@@ -72,7 +72,7 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
       // Only perform the move when the mouse has crossed half of the items height
       // When dragging down, only move when the cursor is below 50%
       // When dragging up, only move when the cursor is above 50%
-      
+
       // Dragging to right
       if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
         return
@@ -108,7 +108,7 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
   drag(drop(ref))
 
   return (
-    <div 
+    <div
       ref={ref}
       css={css`
         position: relative;
