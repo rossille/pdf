@@ -52,10 +52,16 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
   documents,
   className,
   onReorder,
-  onAddDocument
+  onAddDocument,
+  onDocumentRemoved
 }) {
   const [firstDocumentDimensions, setFirstDocumentDimensions] = useState<{ width: number, height: number } | undefined>(undefined)
+  const [selectedDocumentIndex, setSelectedDocumentIndex] = useState<number | null>(null)
+
   const moveDocument = useCallback((dragIndex: number, hoverIndex: number) => {
+    // Hide navigation buttons when documents are reordered
+    setSelectedDocumentIndex(null);
+
     onReorder(
       documents.map((_, idx, array) => {
         if (idx === hoverIndex) return array[dragIndex]
@@ -67,6 +73,10 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
 
   const handleFirstDocumentSized = useCallback((dimensions: { width: number, height: number }) => {
     setFirstDocumentDimensions(dimensions)
+  }, [])
+
+  const handleDocumentSelect = useCallback((index: number) => {
+    setSelectedDocumentIndex(prevIndex => prevIndex === index ? null : index)
   }, [])
 
   return (
@@ -99,8 +109,12 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
             pdfDocument={pdfDocument}
             scale={1}
             index={index}
+            totalCount={documents.length}
             moveDocument={moveDocument}
+            onRemove={onDocumentRemoved}
             onSized={index === 0 ? handleFirstDocumentSized : undefined}
+            isSelected={selectedDocumentIndex === index}
+            onSelect={() => handleDocumentSelect(index)}
           />
         </div>
       ))}

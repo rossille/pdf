@@ -1,4 +1,5 @@
 import { css } from '@emotion/react'
+import { Button } from '@mui/material'
 import { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
@@ -17,19 +18,28 @@ type DocumentCardProps = {
   pdfDocument: PDFDocument
   scale: number
   index: number
+  totalCount: number
   moveDocument: (dragIndex: number, hoverIndex: number) => void
+  onRemove?: (document: PDFDocument) => void
   onSized: undefined | ((size: { width: number, height: number }) => void)
+  isSelected?: boolean
+  onSelect?: () => void
 }
 
 export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
   pdfDocument,
   scale,
   index,
+  totalCount,
   moveDocument,
-  onSized
+  onRemove,
+  onSized,
+  isSelected = false,
+  onSelect
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState<{width: number, height: number}|undefined>(undefined)
+
   const handleResized = useCallback((size:{width:number, height:number}) => {
     setDimensions(size)
     onSized?.(size)
@@ -40,6 +50,30 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
     const depth = pdfDocument.getPageCount()
     return {page, depth}
   }, [pdfDocument])
+
+  const handleClick = useCallback(() => {
+    onSelect?.()
+  }, [onSelect])
+
+  const handleMoveLeft = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (index > 0) {
+      moveDocument(index, index - 1)
+    }
+  }, [index, moveDocument])
+
+  const handleMoveRight = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    // Only move right if not the last document
+    if (index < totalCount - 1) {
+      moveDocument(index, index + 1)
+    }
+  }, [index, totalCount, moveDocument])
+  
+  const handleRemove = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    onRemove?.(pdfDocument)
+  }, [pdfDocument, onRemove])
 
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: string | symbol | null }>({
     accept: DOCUMENT_CARD_TYPE,
@@ -101,6 +135,10 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
   const [{ isDragging }, drag] = useDrag({
     type: DOCUMENT_CARD_TYPE,
     item: () => {
+      // When drag starts, hide this document's buttons by deselecting
+      if (isSelected && onSelect) {
+        onSelect();
+      }
       return { index }
     },
     collect: (monitor) => ({
@@ -117,9 +155,10 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
       css={css`
         position: relative;
         opacity: ${opacity};
-        cursor: move;
+        cursor: pointer;
       `}
       data-handler-id={handlerId}
+      onClick={handleClick}
     >
       {
         dimensions ? <BackPages depth={depth} dimensions={dimensions} /> : null
@@ -131,6 +170,80 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
           left: -${depth * 2}px;
         `
       } page={page} scale={1} onResized={handleResized} />
+
+      {isSelected && dimensions && (
+        <div
+          css={css`
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            z-index: 10;
+          `}
+          onClick={e => e.stopPropagation()}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            disabled={index === 0}
+            onClick={handleMoveLeft}
+            css={css`
+              min-width: 30px !important;
+              width: 60px;
+              height: 60px;
+              padding: 0 !important;
+              border-radius: 50%;
+              opacity: 0.9;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+              font-size: 32px;
+            `}
+          >
+            🡄
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            onClick={handleRemove}
+            css={css`
+              min-width: 30px !important;
+              width: 60px;
+              height: 60px;
+              padding: 0 !important;
+              border-radius: 50%;
+              opacity: 0.9;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+              font-size: 32px;
+            `}
+          >
+            🗙
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            disabled={index >= totalCount - 1}
+            onClick={handleMoveRight}
+            css={css`
+              min-width: 30px !important;
+              width: 60px;
+              height: 60px;
+              padding: 0 !important;
+              border-radius: 50%;
+              opacity: 0.9;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+              font-size: 32px;
+            `}
+          >
+            🡆
+          </Button>
+        </div>
+      )}
     </div>
   )
 })
