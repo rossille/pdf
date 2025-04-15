@@ -1,93 +1,114 @@
 import { css } from '@emotion/react'
+import { Button, Typography } from '@mui/material'
 import { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useState } from 'react'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import { assert } from '../lib/assert'
-import { Page } from '../lib/types'
+import backgroundImageUrl from './background/background.png'
+import { DocumentsList } from './documents-list'
+import { EmptyState } from './empty-state'
 import { FileInputForm } from './file-input-form'
-import { PageList } from './page-list'
-import { RoundButton } from './round-button'
 
 export const App = memo(function App() {
-  const [pages, setPages] = useState<Page[]>([])
+  const [pdfDocuments, setPdfDocuments] = useState<PDFDocument[]>([])
 
   const handleDocumentAdded = useCallback((pdfDocument: PDFDocument) => {
-    setPages((pages) => addPdfDocumentDocument(pages, pdfDocument))
+    setPdfDocuments((pdfDocuments) => [...pdfDocuments, pdfDocument])
   }, [])
 
-  const handlePagesRemoved = useCallback((pageToRemove: Page[]) => {
-    setPages((pages) => pages.filter((page) => !pageToRemove.includes(page)))
-  }, [])
-
-  const handlePageMoved = useCallback((movedPageId: number, afterPageId: number | null) => {
-    setPages((pages) => {
-      const removalIndex = pages.findIndex((page) => page.id === movedPageId)
-      const insertionIndex = afterPageId === null ? 0 : pages.findIndex((page) => page.id === afterPageId) + 1
-      const insertedIndex = insertionIndex > removalIndex ? insertionIndex - 1 : insertionIndex
-      // alert('Remove page at index ' + removalIndex + ' and insert it at index ' + insertedIndex)
-      pages = [...pages]
-      const [movedPage] = pages.splice(removalIndex, 1)
-      pages.splice(insertedIndex, 0, movedPage)
-      return pages
-    })
+  const handleDocumentRemoved = useCallback((pdfDocument: PDFDocument) => {
+    setPdfDocuments((pdfDocuments) => pdfDocuments.filter((doc) => doc !== pdfDocument))
   }, [])
 
   const downloadMerged = useCallback(() => {
-    mergeAndDownload(pages).catch((err) => {
+    mergeAndDownload(pdfDocuments).catch((err) => {
       console.error(err)
       alert('Sorry, an error occured, please check logs')
     })
-  }, [pages])
+  }, [pdfDocuments])
+
+  const handleAddDocumentsClick = useCallback(() => {
+    const input = document.getElementById('file-upload-button') as HTMLInputElement;
+    input?.click();
+  }, [])
 
   return (
-    <div
-      css={css`
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow-x: hidden;
-        overflow-y: scroll;
-        padding: 20px;
-        scrollbar-width: thin;
-        ::-webkit-scrollbar {
-          width: 5px;
-          height: 5px;
-          background-color: lightgray;
-        }
-        ::-webkit-scrollbar-thumb {
-          background-color: gray;
-        }
-      `}
-    >
-      <PageList pages={pages} onPagesRemoved={handlePagesRemoved} onPageMoved={handlePageMoved} />
+    <DndProvider backend={HTML5Backend}>
       <div
         css={css`
           position: fixed;
-          bottom: 20px;
-          right: 25px;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          overflow-x: hidden;
+          overflow-y: scroll;
+          padding: 20px;
+          scrollbar-width: thin;
+          ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+            background-color: lightgray;
+          }
+          ::-webkit-scrollbar-thumb {
+            background-color: gray;
+          }
           display: flex;
-          gap: 10px;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          margin: 0;
+          padding: 0;
+          background: linear-gradient(135deg, #fdfcfb 0%, #e2ebf0 100%);
+          font-family: 'Inter', sans-serif;
+          background-image: url(${backgroundImageUrl});
+          background-repeat: no-repeat;
+          background-size: 512px 512px;
         `}
       >
-        <FileInputForm onDocumentAdded={handleDocumentAdded} />
-        <RoundButton disabled={pages.length === 0} onClick={downloadMerged}>
-          ⬇
-        </RoundButton>
+
+        {pdfDocuments.length === 0 ? (
+          <EmptyState onAddDocuments={handleAddDocumentsClick} />
+        ) : (
+          <DocumentsList
+            documents={pdfDocuments}
+            onDocumentRemoved={handleDocumentRemoved}
+            onReorder={setPdfDocuments}
+            onAddDocument={handleAddDocumentsClick}
+          />
+        )}
+
+        {
+
+        pdfDocuments.length > 0 ?<div
+          css={css`
+            display: flex;
+            justify-content: center;
+          `}
+        >
+          <Button variant='contained' disabled={pdfDocuments.length === 0} onClick={downloadMerged}>
+            <Typography variant='h6'>💾 Merge & Download</Typography>
+          </Button>
+        </div> : null
+        }
+
+
+        <div style={{ display: 'none' }}>
+          <FileInputForm onDocumentAdded={handleDocumentAdded} />
+        </div>
       </div>
-    </div>
+    </DndProvider>
   )
 })
 
-function addPdfDocumentDocument(pages: Page[], pdfDocument: PDFDocument) {
-  return [...pages, ...pdfDocument.getPages().map((_pdfPage, index) => new Page(pdfDocument, index))]
-}
 
-async function mergeAndDownload(pages: Page[]): Promise<void> {
+async function mergeAndDownload(pdfDocuments: PDFDocument[]): Promise<void> {
   const newDocument = await PDFDocument.create()
-  for (const page of pages) {
-    const [copiedPage] = await newDocument.copyPages(page.srcDocument, [page.pageIndex])
-    newDocument.addPage(copiedPage)
+  for (const pdfDocument of pdfDocuments) {
+    const copiedPages = await newDocument.copyPages(pdfDocument, Array.from({ length: pdfDocument.getPageCount() }, (_, i) => i))
+    copiedPages.forEach((copiedPage) => newDocument.addPage(copiedPage))
   }
   const pdfBytes = await newDocument.save()
   const bytes = new Uint8Array(pdfBytes)

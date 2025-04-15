@@ -34,7 +34,7 @@ export const FileInputForm = memo<FileInputFormProps>(function FileInputForm({ o
     <>
       <input ref={inputRef} type="file" id="file-upload-button" onChange={handleChange} accept=".pdf" hidden />
       <RoundButton title="Click to add files" onClick={handleAddClick}>
-        +
+        + Add PDF
       </RoundButton>
     </>
   )
