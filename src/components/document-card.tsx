@@ -37,14 +37,14 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
     return {page, depth}
   }, [pdfDocument])
 
-  const [{ handlerId }, drop] = useDrop({
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: string | symbol | null }>({
     accept: DOCUMENT_CARD_TYPE,
     collect(monitor) {
       return {
         handlerId: monitor.getHandlerId(),
       }
     },
-    hover(item: DragItem, monitor) {
+    hover(item, monitor) {
       if (!ref.current) {
         return
       }

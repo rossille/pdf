@@ -61,7 +61,7 @@ export const App = memo(function App() {
         >
           <FileInputForm onDocumentAdded={handleDocumentAdded} />
           <RoundButton disabled={pdfDocuments.length === 0} onClick={downloadMerged}>
-            ⬇
+            ⬇ Download merged PDF
           </RoundButton>
         </div>
       </div>

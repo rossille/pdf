@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Button, Typography, type ButtonProps } from '@mui/material'
+import { Button, type ButtonProps } from '@mui/material'
 import { memo } from 'react'
 
 export const RoundButton = memo<ButtonProps>(function RoundButton(props) {
@@ -7,13 +7,16 @@ export const RoundButton = memo<ButtonProps>(function RoundButton(props) {
   return (
     <Button
       css={css`
-        border-radius: 100%;
+        border-radius: 20px;
         padding: 9px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       `}
       variant="contained"
       {...passedProps}
     >
-      <Typography variant="h4">{children}</Typography>
+      {children}
     </Button>
   )
 })
