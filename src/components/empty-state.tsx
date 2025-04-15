@@ -1,6 +1,7 @@
 import { css } from '@emotion/react'
-import { Button, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { memo } from 'react'
+import { DocumentPlaceholder } from './documents-list'
 
 type EmptyStateProps = {
   onAddDocuments: () => void
@@ -21,46 +22,19 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({ onAddDocum
       <Typography variant="h2" component="h1">
         Merge PDF
       </Typography>
-      
-      <Typography 
-        variant="subtitle1" 
+
+      <Typography
+        variant="subtitle1"
         color="text.secondary"
         css={css`
           margin-top: 24px;
+          margin-bottom: 24px;
         `}
       >
         Combine multiple PDFs into one document, easily and securely
       </Typography>
-      
-      <div
-        css={css`
-          width: 200px;
-          height: 200px;
-          background-color: #f5f5f5;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 32px 0;
-        `}
-      >
-        <Typography variant="body2" color="text.secondary">
-          [Illustration Placeholder]
-        </Typography>
-      </div>
-      
-      <Button
-        variant="contained"
-        size="large"
-        onClick={onAddDocuments}
-        css={css`
-          border-radius: 20px;
-          padding: 12px 24px;
-          font-size: 1.1rem;
-        `}
-      >
-        Add Documents
-      </Button>
+
+      <DocumentPlaceholder onClick={onAddDocuments} dimensions={{ width: 200, height: 300 }} />
     </div>
   )
 })

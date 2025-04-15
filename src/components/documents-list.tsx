@@ -1,10 +1,10 @@
 import { css } from '@emotion/react'
+import { Button } from '@mui/material'
 import type { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useState } from 'react'
 import { newId } from '../lib/id'
 import { gap } from '../lib/spaces'
 import { DocumentCard } from './document-card'
-import { RoundButton } from './round-button'
 
 type DocumentsListProps = {
   documents: PDFDocument[]
@@ -25,28 +25,26 @@ function getDocumentId(pdfDocument: PDFDocument): number {
 }
 
 
-const DocumentPlaceholder = memo<{ onClick: () => void, dimensions: { width: number, height: number } }>(function DocumentPlaceholder({ onClick, dimensions }) {
+export const DocumentPlaceholder = memo<{ onClick: () => void, dimensions: { width: number, height: number } }>(function DocumentPlaceholder({ onClick, dimensions }) {
   const { width, height } = dimensions
 
 
   return (
-    <div
+    <Button
+      variant="outlined"
       css={css`
         width: ${width}px;
         height: ${height}px;
         border: 2px dashed #aaa;
-        border-radius: 4px;
+        border-radius: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: #f8f8f8;
       `}
       onClick={onClick}
     >
-      <RoundButton onClick={onClick}>
-        + Add document
-      </RoundButton>
-    </div>
+        + Add PDF
+    </Button>
   )
 })
 
@@ -74,11 +72,6 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
   return (
     <div
       css={css`
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
         display: flex;
         gap: ${gap}px;
         flex-wrap: wrap;

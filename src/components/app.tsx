@@ -1,13 +1,14 @@
 import { css } from '@emotion/react'
+import { Button, Typography } from '@mui/material'
 import { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useState } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { assert } from '../lib/assert'
+import backgroundImageUrl from './background/background.png'
 import { DocumentsList } from './documents-list'
 import { EmptyState } from './empty-state'
 import { FileInputForm } from './file-input-form'
-import { RoundButton } from './round-button'
 
 export const App = memo(function App() {
   const [pdfDocuments, setPdfDocuments] = useState<PDFDocument[]>([])
@@ -53,8 +54,21 @@ export const App = memo(function App() {
           ::-webkit-scrollbar-thumb {
             background-color: gray;
           }
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          margin: 0;
+          padding: 0;
+          background: linear-gradient(135deg, #fdfcfb 0%, #e2ebf0 100%);
+          font-family: 'Inter', sans-serif;
+          background-image: url(${backgroundImageUrl});
+          background-repeat: no-repeat;
+          background-size: 512px 512px;
         `}
       >
+
         {pdfDocuments.length === 0 ? (
           <EmptyState onAddDocuments={handleAddDocumentsClick} />
         ) : (
@@ -66,19 +80,23 @@ export const App = memo(function App() {
           />
         )}
 
-        <div
+        {
+
+        pdfDocuments.length > 0 ?<div
           css={css`
-            position: fixed;
-            bottom: 20px;
-            right: 25px;
             display: flex;
-            gap: 10px;
+            justify-content: center;
           `}
         >
+          <Button variant='contained' disabled={pdfDocuments.length === 0} onClick={downloadMerged}>
+            <Typography variant='h6'>💾 Merge & Download</Typography>
+          </Button>
+        </div> : null
+        }
+
+
+        <div style={{ display: 'none' }}>
           <FileInputForm onDocumentAdded={handleDocumentAdded} />
-          <RoundButton disabled={pdfDocuments.length === 0} onClick={downloadMerged}>
-            ⬇ Download merged PDF
-          </RoundButton>
         </div>
       </div>
     </DndProvider>
