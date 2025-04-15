@@ -2,41 +2,27 @@ import { css } from '@emotion/react'
 import { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useState } from 'react'
 import { assert } from '../lib/assert'
-import { Page } from '../lib/types'
+import { DocumentsList } from './documents-list'
 import { FileInputForm } from './file-input-form'
-import { PageList } from './page-list'
 import { RoundButton } from './round-button'
 
 export const App = memo(function App() {
-  const [pages, setPages] = useState<Page[]>([])
+  const [pdfDocuments, setPdfDocuments] = useState<PDFDocument[]>([])
 
   const handleDocumentAdded = useCallback((pdfDocument: PDFDocument) => {
-    setPages((pages) => addPdfDocumentDocument(pages, pdfDocument))
+    setPdfDocuments((pdfDocuments) => [...pdfDocuments, pdfDocument])
   }, [])
 
-  const handlePagesRemoved = useCallback((pageToRemove: Page[]) => {
-    setPages((pages) => pages.filter((page) => !pageToRemove.includes(page)))
-  }, [])
-
-  const handlePageMoved = useCallback((movedPageId: number, afterPageId: number | null) => {
-    setPages((pages) => {
-      const removalIndex = pages.findIndex((page) => page.id === movedPageId)
-      const insertionIndex = afterPageId === null ? 0 : pages.findIndex((page) => page.id === afterPageId) + 1
-      const insertedIndex = insertionIndex > removalIndex ? insertionIndex - 1 : insertionIndex
-      // alert('Remove page at index ' + removalIndex + ' and insert it at index ' + insertedIndex)
-      pages = [...pages]
-      const [movedPage] = pages.splice(removalIndex, 1)
-      pages.splice(insertedIndex, 0, movedPage)
-      return pages
-    })
+  const handleDocumentRemoved = useCallback((pdfDocument: PDFDocument) => {
+    setPdfDocuments((pdfDocuments) => pdfDocuments.filter((doc) => doc !== pdfDocument))
   }, [])
 
   const downloadMerged = useCallback(() => {
-    mergeAndDownload(pages).catch((err) => {
+    mergeAndDownload(pdfDocuments).catch((err) => {
       console.error(err)
       alert('Sorry, an error occured, please check logs')
     })
-  }, [pages])
+  }, [pdfDocuments])
 
   return (
     <div
@@ -60,7 +46,7 @@ export const App = memo(function App() {
         }
       `}
     >
-      <PageList pages={pages} onPagesRemoved={handlePagesRemoved} onPageMoved={handlePageMoved} />
+      <DocumentsList documents={pdfDocuments} onDocumentRemoved={handleDocumentRemoved} />
       <div
         css={css`
           position: fixed;
@@ -71,7 +57,7 @@ export const App = memo(function App() {
         `}
       >
         <FileInputForm onDocumentAdded={handleDocumentAdded} />
-        <RoundButton disabled={pages.length === 0} onClick={downloadMerged}>
+        <RoundButton disabled={pdfDocuments.length === 0} onClick={downloadMerged}>
           ⬇
         </RoundButton>
       </div>
@@ -79,15 +65,12 @@ export const App = memo(function App() {
   )
 })
 
-function addPdfDocumentDocument(pages: Page[], pdfDocument: PDFDocument) {
-  return [...pages, ...pdfDocument.getPages().map((_pdfPage, index) => new Page(pdfDocument, index))]
-}
 
-async function mergeAndDownload(pages: Page[]): Promise<void> {
+async function mergeAndDownload(pdfDocuments: PDFDocument[]): Promise<void> {
   const newDocument = await PDFDocument.create()
-  for (const page of pages) {
-    const [copiedPage] = await newDocument.copyPages(page.srcDocument, [page.pageIndex])
-    newDocument.addPage(copiedPage)
+  for (const pdfDocument of pdfDocuments) {
+    const copiedPages = await newDocument.copyPages(pdfDocument, Array.from({ length: pdfDocument.getPageCount() }, (_, i) => i))
+    copiedPages.forEach((copiedPage) => newDocument.addPage(copiedPage))
   }
   const pdfBytes = await newDocument.save()
   const bytes = new Uint8Array(pdfBytes)

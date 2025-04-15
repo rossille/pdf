@@ -1,3 +1,4 @@
 {
-    "prettier.configPath": ".prettier.cjs"
+    "prettier.configPath": ".prettier.cjs",
+    "editor.formatOnSave": true
 }
