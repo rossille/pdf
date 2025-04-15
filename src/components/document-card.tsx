@@ -18,19 +18,23 @@ type DocumentCardProps = {
   scale: number
   index: number
   moveDocument: (dragIndex: number, hoverIndex: number) => void
+  onSized: undefined | ((size: { width: number, height: number }) => void)
 }
 
 export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
   pdfDocument,
   scale,
   index,
-  moveDocument
+  moveDocument,
+  onSized
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState<{width: number, height: number}|undefined>(undefined)
   const handleResized = useCallback((size:{width:number, height:number}) => {
     setDimensions(size)
-  }, [])
+    onSized?.(size)
+  }, [onSized])
+
   const {page, depth} = useMemo(() => {
     const page = new Page(pdfDocument, 0)
     const depth = pdfDocument.getPageCount()

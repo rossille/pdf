@@ -5,6 +5,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { assert } from '../lib/assert'
 import { DocumentsList } from './documents-list'
+import { EmptyState } from './empty-state'
 import { FileInputForm } from './file-input-form'
 import { RoundButton } from './round-button'
 
@@ -25,6 +26,11 @@ export const App = memo(function App() {
       alert('Sorry, an error occured, please check logs')
     })
   }, [pdfDocuments])
+
+  const handleAddDocumentsClick = useCallback(() => {
+    const input = document.getElementById('file-upload-button') as HTMLInputElement;
+    input?.click();
+  }, [])
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -49,7 +55,17 @@ export const App = memo(function App() {
           }
         `}
       >
-        <DocumentsList documents={pdfDocuments} onDocumentRemoved={handleDocumentRemoved} onReorder={setPdfDocuments} />
+        {pdfDocuments.length === 0 ? (
+          <EmptyState onAddDocuments={handleAddDocumentsClick} />
+        ) : (
+          <DocumentsList
+            documents={pdfDocuments}
+            onDocumentRemoved={handleDocumentRemoved}
+            onReorder={setPdfDocuments}
+            onAddDocument={handleAddDocumentsClick}
+          />
+        )}
+
         <div
           css={css`
             position: fixed;

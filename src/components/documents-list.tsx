@@ -1,15 +1,17 @@
 import { css } from '@emotion/react'
 import type { PDFDocument } from 'pdf-lib'
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { newId } from '../lib/id'
 import { gap } from '../lib/spaces'
 import { DocumentCard } from './document-card'
+import { RoundButton } from './round-button'
 
 type DocumentsListProps = {
   documents: PDFDocument[]
   className?: string
   onDocumentRemoved: (document: PDFDocument) => void
   onReorder: (documents: PDFDocument[]) => void
+  onAddDocument: () => void
 }
 
 const idsMap = new Map<PDFDocument, number>()
@@ -23,12 +25,38 @@ function getDocumentId(pdfDocument: PDFDocument): number {
 }
 
 
-export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({ 
-  documents, 
-  className, 
-  onDocumentRemoved,
-  onReorder 
+const DocumentPlaceholder = memo<{ onClick: () => void, dimensions: { width: number, height: number } }>(function DocumentPlaceholder({ onClick, dimensions }) {
+  const { width, height } = dimensions
+
+
+  return (
+    <div
+      css={css`
+        width: ${width}px;
+        height: ${height}px;
+        border: 2px dashed #aaa;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f8f8;
+      `}
+      onClick={onClick}
+    >
+      <RoundButton onClick={onClick}>
+        + Add document
+      </RoundButton>
+    </div>
+  )
+})
+
+export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
+  documents,
+  className,
+  onReorder,
+  onAddDocument
 }) {
+  const [firstDocumentDimensions, setFirstDocumentDimensions] = useState<{ width: number, height: number } | undefined>(undefined)
   const moveDocument = useCallback((dragIndex: number, hoverIndex: number) => {
     onReorder(
       documents.map((_, idx, array) => {
@@ -38,6 +66,10 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
       })
     )
   }, [documents, onReorder])
+
+  const handleFirstDocumentSized = useCallback((dimensions: { width: number, height: number }) => {
+    setFirstDocumentDimensions(dimensions)
+  }, [])
 
   return (
     <div
@@ -70,14 +102,17 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
             }
           `}
         >
-          <DocumentCard 
-            pdfDocument={pdfDocument} 
-            scale={1} 
+          <DocumentCard
+            pdfDocument={pdfDocument}
+            scale={1}
             index={index}
-            moveDocument={moveDocument} 
+            moveDocument={moveDocument}
+            onSized={index === 0 ? handleFirstDocumentSized : undefined}
           />
         </div>
       ))}
+      {firstDocumentDimensions
+       ? <DocumentPlaceholder onClick={onAddDocument} dimensions={firstDocumentDimensions} /> : null}
     </div>
   )
 })
