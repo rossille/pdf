@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { Button } from '@mui/material'
 import type { PDFDocument } from 'pdf-lib'
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useState, type Dispatch, type SetStateAction } from 'react'
 import { newId } from '../lib/id'
 import { gap } from '../lib/spaces'
 import { DocumentCard } from './document-card'
@@ -12,6 +12,8 @@ type DocumentsListProps = {
   onDocumentRemoved: (document: PDFDocument) => void
   onReorder: (documents: PDFDocument[]) => void
   onAddDocument: () => void
+  selectedDocumentIndex: number | null
+  onDocumentSelect: Dispatch<SetStateAction<number | null>>
 }
 
 const idsMap = new Map<PDFDocument, number>()
@@ -53,14 +55,15 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
   className,
   onReorder,
   onAddDocument,
-  onDocumentRemoved
+  onDocumentRemoved,
+  selectedDocumentIndex,
+  onDocumentSelect
 }) {
   const [firstDocumentDimensions, setFirstDocumentDimensions] = useState<{ width: number, height: number } | undefined>(undefined)
-  const [selectedDocumentIndex, setSelectedDocumentIndex] = useState<number | null>(null)
 
   const moveDocument = useCallback((dragIndex: number, hoverIndex: number) => {
     // Hide navigation buttons when documents are reordered
-    setSelectedDocumentIndex(null);
+    onDocumentSelect(null);
 
     onReorder(
       documents.map((_, idx, array) => {
@@ -69,15 +72,15 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
         return array[idx]
       })
     )
-  }, [documents, onReorder])
+  }, [documents, onReorder, onDocumentSelect])
 
   const handleFirstDocumentSized = useCallback((dimensions: { width: number, height: number }) => {
     setFirstDocumentDimensions(dimensions)
   }, [])
 
   const handleDocumentSelect = useCallback((index: number) => {
-    setSelectedDocumentIndex(prevIndex => prevIndex === index ? null : index)
-  }, [])
+    onDocumentSelect(prevIndex => prevIndex === index ? null : index)
+  }, [onDocumentSelect])
 
   return (
     <div

@@ -1,5 +1,6 @@
 import { css } from '@emotion/react'
-import { Button } from '@mui/material'
+import { ArrowBack, ArrowForward, Clear } from '@mui/icons-material'
+import { Button, Icon } from '@mui/material'
 import { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
@@ -203,7 +204,13 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
               font-size: 32px;
             `}
           >
-            🡄
+            <Icon css={css`
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            `}><ArrowBack css={css`
+              font-size: 32px;
+            `}/></Icon>
           </Button>
           <Button
             variant="contained"
@@ -221,7 +228,13 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
               font-size: 32px;
             `}
           >
-            🗙
+            <Icon css={css`
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            `}><Clear css={css`
+              font-size: 32px;
+            `}/></Icon>
           </Button>
           <Button
             variant="contained"
@@ -237,10 +250,15 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
               border-radius: 50%;
               opacity: 0.9;
               box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-              font-size: 32px;
             `}
           >
-            🡆
+            <Icon css={css`
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            `}><ArrowForward css={css`
+              font-size: 32px;
+            `}/></Icon>
           </Button>
         </div>
       )}

@@ -5,7 +5,6 @@ import { memo, useCallback, useState } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { assert } from '../lib/assert'
-import backgroundImageUrl from './background/background.png'
 import { DocumentsList } from './documents-list'
 import { EmptyState } from './empty-state'
 import { FileInputForm } from './file-input-form'
@@ -13,8 +12,11 @@ import { FileInputForm } from './file-input-form'
 export const App = memo(function App() {
   const [pdfDocuments, setPdfDocuments] = useState<PDFDocument[]>([])
 
+  const [selectedDocumentIndex, setSelectedDocumentIndex] = useState<number | null>(null)
+  
   const handleDocumentAdded = useCallback((pdfDocument: PDFDocument) => {
     setPdfDocuments((pdfDocuments) => [...pdfDocuments, pdfDocument])
+    setSelectedDocumentIndex(null)
   }, [])
 
   const handleDocumentRemoved = useCallback((pdfDocument: PDFDocument) => {
@@ -61,11 +63,8 @@ export const App = memo(function App() {
           gap: 20px;
           margin: 0;
           padding: 0;
-          background: linear-gradient(135deg, #d4ac84 0%, #79b6d6 100%);
+          background: linear-gradient(65deg, #ffffff 0%, #eaf8ff 100%);
           font-family: 'Inter', sans-serif;
-          background-image: url(${backgroundImageUrl});
-          background-repeat: no-repeat;
-          background-size: 512px 512px;
         `}
       >
 
@@ -77,6 +76,8 @@ export const App = memo(function App() {
             onDocumentRemoved={handleDocumentRemoved}
             onReorder={setPdfDocuments}
             onAddDocument={handleAddDocumentsClick}
+            selectedDocumentIndex={selectedDocumentIndex}
+            onDocumentSelect={setSelectedDocumentIndex}
           />
         )}
 

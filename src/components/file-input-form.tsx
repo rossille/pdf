@@ -22,6 +22,8 @@ export const FileInputForm = memo<FileInputFormProps>(function FileInputForm({ o
         for (const file of files) {
           onDocumentAdded(await PDFDocument.load(await file.arrayBuffer()))
         }
+        // Reset the input value so the same file can be selected again
+        event.target.value = ''
       })().catch((err) => {
         console.error(err)
         alert('An error occured while adding documents, check console')
