@@ -69,7 +69,7 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
       moveDocument(index, index + 1)
     }
   }, [index, totalCount, moveDocument])
-  
+
   const handleRemove = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     onRemove?.(pdfDocument)
@@ -258,7 +258,7 @@ const BackPages = memo<{depth: number, dimensions: {width: number, height: numbe
     align-items: center;
     justify-content: center;
   `}>
-    {Array.from({length: depth}).map((_, index) => (
+    {Array.from({length: depth - 1}).map((_, index) => (
       <div key={index} css={css`
         background-color: white;
         position: absolute;

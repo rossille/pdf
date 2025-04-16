@@ -1,12 +1,12 @@
 import { css } from '@emotion/react'
 import { PDFDocument } from 'pdf-lib'
 import type { PDFDocumentLoadingTask, RenderTask } from 'pdfjs-dist'
-import { memo, useEffect, useRef } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { assert } from '../lib/assert'
 import { createDeferred, type Deferred } from '../lib/deferred'
 import type { Page } from '../lib/page'
 import { getPdfJs } from '../lib/pdf-js'
-import { pageHeight } from '../lib/spaces'
+import { pageWidth } from '../lib/spaces'
 
 type PageCardProps = {
   page: Page
@@ -16,11 +16,12 @@ type PageCardProps = {
 }
 
 export const PageCard = memo<PageCardProps>(function PageCard({ page, scale, className, onResized }) {
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | undefined>(undefined)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const pageScale = pageHeight / page.height
+  const pageScale = pageWidth / page.width
 
   const width = page.width * pageScale * scale
-  const height = pageHeight * scale
+  const height = page.height * pageScale * scale
 
   useEffect(() => {
     let cancelled = false
@@ -74,10 +75,16 @@ export const PageCard = memo<PageCardProps>(function PageCard({ page, scale, cla
 
       // Taking into account the device pixel ratio allows for a sharper rendering on high DPI screens
       const outputScale = window.devicePixelRatio
+
       canvas.width = Math.floor(viewport.width * outputScale)
       canvas.height = Math.floor(viewport.height * outputScale)
-      canvas.style.width = Math.floor(viewport.width) + 'px'
-      canvas.style.height = Math.floor(viewport.height) + 'px'
+
+
+      const canvasOuterWidth = Math.floor(viewport.width)
+      const canvasOuterHeight = Math.floor(viewport.height)
+      canvas.style.width = canvasOuterWidth + 'px'
+      canvas.style.height = canvasOuterHeight + 'px'
+      setDimensions({ width: canvasOuterWidth, height: canvasOuterHeight })
       const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : undefined
 
       const renderContext = {
@@ -101,8 +108,10 @@ export const PageCard = memo<PageCardProps>(function PageCard({ page, scale, cla
   }, [page, width])
 
   useEffect(() => {
-    onResized({ width, height })
-  }, [width, height, onResized])
+    if (dimensions) {
+      onResized(dimensions)
+    }
+  }, [dimensions, onResized])
 
   return (
     <canvas

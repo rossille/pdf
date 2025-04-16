@@ -61,7 +61,7 @@ export const App = memo(function App() {
           gap: 20px;
           margin: 0;
           padding: 0;
-          background: linear-gradient(135deg, #fdfcfb 0%, #e2ebf0 100%);
+          background: linear-gradient(135deg, #d4ac84 0%, #79b6d6 100%);
           font-family: 'Inter', sans-serif;
           background-image: url(${backgroundImageUrl});
           background-repeat: no-repeat;

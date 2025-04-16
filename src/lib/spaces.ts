@@ -1,2 +1,2 @@
 export const gap = 40
-export const pageHeight = 300
+export const pageWidth = 200
