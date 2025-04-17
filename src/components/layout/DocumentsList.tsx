@@ -49,6 +49,21 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
   const handleDocumentSelect = useCallback((index: number) => {
     onDocumentSelect(prevIndex => prevIndex === index ? null : index);
   }, [onDocumentSelect]);
+  
+  const handleSplitDocument = useCallback((document: PDFDocument, singlePageDocuments: PDFDocument[]) => {
+    // Remove the original multi-page document
+    const currentIndex = documents.indexOf(document);
+    const newDocuments = [...documents];
+    
+    // Replace the multi-page document with single-page documents
+    newDocuments.splice(currentIndex, 1, ...singlePageDocuments);
+    
+    // Update the document list
+    onReorder(newDocuments);
+    
+    // Deselect any selected document
+    onDocumentSelect(null);
+  }, [documents, onReorder, onDocumentSelect]);
 
   return (
     <DocumentsListContainer className={className}>
@@ -61,6 +76,7 @@ export const DocumentsList = memo<DocumentsListProps>(function DocumentsList({
             totalCount={documents.length}
             moveDocument={moveDocument}
             onRemove={onDocumentRemoved}
+            onSplit={handleSplitDocument}
             onSized={index === 0 ? handleFirstDocumentSized : undefined}
             isSelected={selectedDocumentIndex === index}
             onSelect={() => handleDocumentSelect(index)}

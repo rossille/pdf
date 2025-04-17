@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { ArrowBack, ArrowForward, Clear } from '@mui/icons-material';
+import { ArrowBack, ArrowForward, Clear, CallSplit } from '@mui/icons-material';
 import { PDFDocument } from 'pdf-lib';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDragDrop } from '../../hooks/useDragDrop';
@@ -17,6 +17,7 @@ interface DocumentCardProps {
   totalCount: number;
   moveDocument: (dragIndex: number, hoverIndex: number) => void;
   onRemove?: (document: PDFDocument) => void;
+  onSplit?: (document: PDFDocument, singlePageDocuments: PDFDocument[]) => void;
   onSized: undefined | ((size: { width: number; height: number }) => void);
   isSelected?: boolean;
   onSelect?: () => void;
@@ -32,6 +33,7 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
   totalCount,
   moveDocument,
   onRemove,
+  onSplit,
   onSized,
   isSelected = false,
   onSelect
@@ -72,6 +74,16 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
     e.stopPropagation();
     onRemove?.(pdfDocument);
   }, [pdfDocument, onRemove]);
+
+  const handleSplit = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (depth > 1 && onSplit) {
+      // Import here to avoid circular dependencies
+      const { splitPdfIntoPages } = await import('../../utils/pdf-utils');
+      const singlePageDocuments = await splitPdfIntoPages(pdfDocument);
+      onSplit(pdfDocument, singlePageDocuments);
+    }
+  }, [pdfDocument, depth, onSplit]);
 
   const { ref, handlerId, isDragging } = useDragDrop(index, moveDocument, isSelected, onSelect);
 
@@ -118,6 +130,16 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
           >
             <Clear fontSize="small" />
           </ActionButton>
+
+          {depth > 1 && (
+            <ActionButton
+              color="secondary"
+              onClick={handleSplit}
+              title="Split into individual pages"
+            >
+              <CallSplit fontSize="small" />
+            </ActionButton>
+          )}
 
           <ActionButton
             disabled={index >= totalCount - 1}

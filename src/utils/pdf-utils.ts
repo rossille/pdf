@@ -1,9 +1,9 @@
 import { PDFDocument } from 'pdf-lib';
 
 /**
- * Generates and initiates download of a merged PDF
+ * Generates a merged PDF from multiple documents
  * @param pdfDocuments The PDF documents to merge
- * @param fileName The name for the downloaded file
+ * @returns Binary data of the merged PDF
  */
 export async function generateMergedPdf(pdfDocuments: PDFDocument[]): Promise<Uint8Array> {
   const newDocument = await PDFDocument.create();
@@ -18,6 +18,25 @@ export async function generateMergedPdf(pdfDocuments: PDFDocument[]): Promise<Ui
   
   const pdfBytes = await newDocument.save();
   return new Uint8Array(pdfBytes);
+}
+
+/**
+ * Splits a PDF document into individual single-page documents
+ * @param pdfDocument The PDF document to split
+ * @returns Array of single-page PDF documents
+ */
+export async function splitPdfIntoPages(pdfDocument: PDFDocument): Promise<PDFDocument[]> {
+  const pageCount = pdfDocument.getPageCount();
+  const singlePageDocuments: PDFDocument[] = [];
+  
+  for (let i = 0; i < pageCount; i++) {
+    const newDocument = await PDFDocument.create();
+    const [copiedPage] = await newDocument.copyPages(pdfDocument, [i]);
+    newDocument.addPage(copiedPage);
+    singlePageDocuments.push(newDocument);
+  }
+  
+  return singlePageDocuments;
 }
 
 /**
