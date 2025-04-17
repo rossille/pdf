@@ -1,10 +1,11 @@
 import { PDFDocument } from 'pdf-lib';
-import { assert } from './assert';
 
 /**
- * Merges multiple PDF documents into a single PDF and initiates download
+ * Generates and initiates download of a merged PDF
+ * @param pdfDocuments The PDF documents to merge
+ * @param fileName The name for the downloaded file
  */
-export async function mergeAndDownload(pdfDocuments: PDFDocument[]): Promise<void> {
+export async function generateMergedPdf(pdfDocuments: PDFDocument[]): Promise<Uint8Array> {
   const newDocument = await PDFDocument.create();
   
   for (const pdfDocument of pdfDocuments) {
@@ -16,13 +17,18 @@ export async function mergeAndDownload(pdfDocuments: PDFDocument[]): Promise<voi
   }
   
   const pdfBytes = await newDocument.save();
-  const bytes = new Uint8Array(pdfBytes);
-  const blob = new Blob([bytes], { type: 'application/pdf' });
-  
+  return new Uint8Array(pdfBytes);
+}
+
+/**
+ * Initiates download of a PDF file
+ * @param pdfBytes Binary data of the PDF
+ * @param fileName The name for the downloaded file
+ */
+export function downloadPdf(pdfBytes: Uint8Array, fileName: string): void {
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
   const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
-  const fileName = prompt('Choose a name for the merged file', 'merged.pdf');
-  assert(fileName, 'fileName null despite having a default value');
   link.download = fileName;
   link.click();
 }
