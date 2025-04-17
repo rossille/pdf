@@ -27,10 +27,23 @@
         .rotating {
             animation: rotating 2s linear infinite;
         }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        #react-root {
+            min-height: 100vh;
+            width: 100%;
+        }
     </style>
 </head>
 <body class="notranslate">
-    <div id="react-root" style="position: fixed; top: 0; height: 100%; width: 100%;"></div>
+    <div id="react-root"></div>
     <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>

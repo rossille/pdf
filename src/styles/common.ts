@@ -5,36 +5,37 @@ import { gap } from '../utils/spaces';
 
 // App Layout Styles
 export const AppContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  padding-top: 70px;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #F9FAFE 0%, #EDF1FF 50%, #E1EFFF 100%);
+  font-family: 'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+`;
+
+export const MainContent = styled.main`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 90px 20px 40px;
+  gap: 30px;
+  width: 100%;
+
+  /* Custom scrollbar styling */
   scrollbar-width: thin;
-  ::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
     background-color: rgba(240, 242, 255, 0.5);
   }
-  ::-webkit-scrollbar-thumb {
+  &::-webkit-scrollbar-thumb {
     background-color: rgba(67, 97, 238, 0.3);
     border-radius: 3px;
     &:hover {
       background-color: rgba(67, 97, 238, 0.5);
     }
   }
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin: 0;
-  padding: 0 20px;
-  background: linear-gradient(135deg, #F9FAFE 0%, #EDF1FF 50%, #E1EFFF 100%);
-  font-family: 'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif;
 `;
 
 export const FlexCenterBox = styled(Box)`
@@ -90,8 +91,10 @@ export const EmptyStateContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  width: 100%;
+  max-width: 1200px;
   text-align: center;
+  padding: 30px;
 `;
 
 export const EmptyStateTitle = styled.div`

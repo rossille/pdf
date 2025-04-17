@@ -3,7 +3,7 @@ import { memo, useCallback, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { usePdfDocuments } from '../hooks/usePdfDocuments';
-import { AppContainer, FlexCenterBox } from '../styles/common';
+import { AppContainer, FlexCenterBox, MainContent } from '../styles/common';
 import { theme } from '../styles/theme';
 import { downloadPdf, generateMergedPdf } from '../utils/pdf-utils';
 import { FileNameDialog } from './dialogs/FileNameDialog';
@@ -73,7 +73,7 @@ export const App = memo(function App() {
         <AppContainer>
           <BackgroundDecoration />
 
-          <AppBar position="fixed">
+          <AppBar position="fixed" elevation={0}>
             <Toolbar>
               <div style={{ width: '200px' }}>
                 <Typography variant="h5" component="div" sx={{ flexGrow: 0, fontWeight: 700 }}>
@@ -100,36 +100,38 @@ export const App = memo(function App() {
             onCancel={handleFileNameCancel}
           />
 
-          {pdfDocuments.length === 0 ? (
-            <EmptyState onAddDocuments={handleAddDocumentsClick} />
-          ) : (
-            <DocumentsList
-              documents={pdfDocuments}
-              onDocumentRemoved={handleDocumentRemoved}
-              onReorder={handleReorderDocuments}
-              onAddDocument={handleAddDocumentsClick}
-              selectedDocumentIndex={selectedDocumentIndex}
-              onDocumentSelect={setSelectedDocumentIndex}
-            />
-          )}
+          <MainContent>
+            {pdfDocuments.length === 0 ? (
+              <EmptyState onAddDocuments={handleAddDocumentsClick} />
+            ) : (
+              <DocumentsList
+                documents={pdfDocuments}
+                onDocumentRemoved={handleDocumentRemoved}
+                onReorder={handleReorderDocuments}
+                onAddDocument={handleAddDocumentsClick}
+                selectedDocumentIndex={selectedDocumentIndex}
+                onDocumentSelect={setSelectedDocumentIndex}
+              />
+            )}
 
-          {pdfDocuments.length > 0 && (
-            <FlexCenterBox>
-              <Button
-                variant="contained"
-                onClick={handleDownloadMerged}
-                size="large"
-                sx={{
-                  py: 1.5,
-                  px: 3,
-                  fontSize: '1.1rem',
-                  fontWeight: 600
-                }}
-              >
-                💾 Merge & Download
-              </Button>
-            </FlexCenterBox>
-          )}
+            {pdfDocuments.length > 0 && (
+              <FlexCenterBox sx={{ mb: 4 }}>
+                <Button
+                  variant="contained"
+                  onClick={handleDownloadMerged}
+                  size="large"
+                  sx={{
+                    py: 1.5,
+                    px: 3,
+                    fontSize: '1.1rem',
+                    fontWeight: 600
+                  }}
+                >
+                  💾 Merge & Download
+                </Button>
+              </FlexCenterBox>
+            )}
+          </MainContent>
 
           <div style={{ display: 'none' }}>
             <FileInputForm onDocumentAdded={handleDocumentAdded} />

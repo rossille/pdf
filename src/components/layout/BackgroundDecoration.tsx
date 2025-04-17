@@ -13,14 +13,16 @@ export const BackgroundDecoration = memo<BackgroundDecorationProps>(function Bac
     <div
       className={className}
       css={css`
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
         pointer-events: none;
-        z-index: -1;
+        z-index: 0;
         overflow: hidden;
+        min-height: 100vh;
+        width: 100%;
       `}
     >
       {/* Top-left decoration */}

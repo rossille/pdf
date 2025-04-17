@@ -122,6 +122,8 @@ export const theme = createTheme({
         root: {
           boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
           background: 'linear-gradient(90deg, #4361EE 0%, #4CC9F0 100%)',
+          backdropFilter: 'blur(8px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
         },
       },
     },
