@@ -1,0 +1,12 @@
+Here are the prompts to generate the decorative SVG images:
+
+1. For decoration-top-left.svg:
+"Create a modern abstract design featuring fluid, curved shapes in soft shades of blue and purple (#4361EE, #738BF5, #4CC9F0) with occasional pink accents (#F72585). The shapes should flow from the top-left corner in an organic, wave-like pattern. Style should be minimalist but playful, with some transparency and overlapping elements. Make the design appropriate for a web application background that won't distract from content. Create as an SVG format with a transparent background."
+
+2. For decoration-bottom-right.svg:
+"Design an abstract SVG graphic with curved organic shapes in blue, purple, and pink gradient colors (#4361EE, #4CC9F0, #F72585). The composition should flow from the bottom-right corner with overlapping translucent elements creating depth. Include some subtle dot patterns and thin lines for a modern tech feel. The style should be minimal and elegant, suitable for a website background that won't compete with the main content. Create with a transparent background and ensure high contrast areas are minimized."
+
+3. For decoration-center.svg:
+"Create a simple, iconic SVG illustration of stacked documents or PDF files with the top document slightly fanned out. Use a combination of blue and pink gradient outlines (#4361EE to #F72585) with minimal detail and a clean, modern style. The design should be a single cohesive graphic (not separate elements) that represents the concept of merging PDF files. Make it work on a transparent background and keep it simple enough to be recognizable at different sizes."
+
+After generating these images with an AI image generator that supports SVG output (like DALL-E or Midjourney), save them to the public/pdf/ directory with their respective filenames.

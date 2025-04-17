@@ -28,7 +28,7 @@ describe('DocumentPlaceholder', () => {
 
   it('uses outlined variant for the button', () => {
     renderWithTheme(<DocumentPlaceholder onClick={() => {}} dimensions={{ width: 200, height: 300 }} />);
-    const button = screen.getByText('+ Add PDF');
-    expect(button).toHaveClass('MuiButton-outlined');
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('MuiButton-outlined', { exact: false });
   });
 });

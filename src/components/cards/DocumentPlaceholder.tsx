@@ -1,5 +1,6 @@
+import { css } from '@emotion/react';
+import { Button } from '@mui/material';
 import { memo } from 'react';
-import { StyledPlaceholderButton } from '../../styles/common';
 
 interface DocumentPlaceholderProps {
   onClick: () => void;
@@ -14,13 +15,31 @@ export const DocumentPlaceholder = memo<DocumentPlaceholderProps>(
     const { width, height } = dimensions;
 
     return (
-      <StyledPlaceholderButton
+      <Button
         variant="outlined"
-        sx={{ width: `${width}px`, height: `${height}px` }}
         onClick={onClick}
+        sx={{ 
+          width: `${width}px`, 
+          height: `${height}px`,
+          borderRadius: '12px',
+          borderWidth: '2px',
+          borderStyle: 'dashed',
+          borderColor: 'primary.main',
+          color: 'primary.main',
+          fontSize: '1.1rem',
+          fontWeight: 600,
+          transition: 'all 0.3s ease',
+          background: 'rgba(255, 255, 255, 0.7)',
+          '&:hover': {
+            borderColor: 'secondary.main',
+            color: 'secondary.main',
+            background: 'rgba(255, 255, 255, 0.9)',
+            transform: 'scale(1.03)',
+          }
+        }}
       >
         + Add PDF
-      </StyledPlaceholderButton>
+      </Button>
     );
   }
 );

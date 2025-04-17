@@ -2,10 +2,11 @@ import { css } from '@emotion/react';
 import { ArrowBack, ArrowForward, Clear } from '@mui/icons-material';
 import { PDFDocument } from 'pdf-lib';
 import { memo, useCallback, useMemo, useState } from 'react';
-import { DOCUMENT_CARD_TYPE, useDragDrop } from '../../hooks/useDragDrop';
+import { useDragDrop } from '../../hooks/useDragDrop';
+import { useStackConfiguration } from '../../hooks/useStackConfiguration';
+import { ActionButtonsContainer } from '../../styles/common';
 import { Page } from '../../utils/page';
 import { ActionButton } from '../buttons/ActionButton';
-import { ActionButtonsContainer } from '../../styles/common';
 import { BackPages } from './BackPages';
 import { PageCard } from './PageCard';
 
@@ -76,6 +77,8 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
 
   const opacity = isDragging ? 0.4 : 1;
 
+  const { firstPageTopology, backPagesTopologies } = useStackConfiguration(depth);
+
   return (
     <div
       ref={ref}
@@ -87,17 +90,17 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
       data-handler-id={handlerId}
       onClick={handleClick}
     >
-      {dimensions && <BackPages depth={depth} dimensions={dimensions} />}
-      
-      <PageCard 
+      {dimensions && <BackPages backPages={backPagesTopologies} dimensions={dimensions} />}
+
+      <PageCard
         css={css`
           position: relative;
-          top: -${depth * 2}px;
-          left: -${depth * 2}px;
-        `} 
-        page={page} 
-        scale={1} 
-        onResized={handleResized} 
+          top: ${firstPageTopology.offsetY}px;
+          left: ${firstPageTopology.offsetX}px;
+        `}
+        page={page}
+        scale={1}
+        onResized={handleResized}
       />
 
       {isSelected && dimensions && (
@@ -108,14 +111,14 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
           >
             <ArrowBack fontSize="small" />
           </ActionButton>
-          
+
           <ActionButton
             color="error"
             onClick={handleRemove}
           >
             <Clear fontSize="small" />
           </ActionButton>
-          
+
           <ActionButton
             disabled={index >= totalCount - 1}
             onClick={handleMoveRight}

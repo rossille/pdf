@@ -5,24 +5,25 @@ import { EmptyState } from './EmptyState';
 describe('EmptyState', () => {
   it('renders the title', () => {
     renderWithTheme(<EmptyState onAddDocuments={() => {}} />);
-    expect(screen.getByText('Merge PDF')).toBeInTheDocument();
+    expect(screen.getByText('Merge PDF Files')).toBeInTheDocument();
   });
 
   it('renders the description', () => {
     renderWithTheme(<EmptyState onAddDocuments={() => {}} />);
-    expect(screen.getByText('Combine multiple PDFs into one document, easily and securely')).toBeInTheDocument();
+    // Use a regex to match text that might be split across elements
+    expect(screen.getByText(/Combine multiple PDFs into one document/)).toBeInTheDocument();
   });
 
-  it('renders a document placeholder button', () => {
+  it('renders the Get Started section', () => {
     renderWithTheme(<EmptyState onAddDocuments={() => {}} />);
-    expect(screen.getByText('+ Add PDF')).toBeInTheDocument();
+    expect(screen.getByText('Get Started')).toBeInTheDocument();
   });
 
-  it('calls onAddDocuments when the placeholder is clicked', () => {
+  it('calls onAddDocuments when the button is clicked', () => {
     const handleAddDocuments = vi.fn();
     renderWithTheme(<EmptyState onAddDocuments={handleAddDocuments} />);
     
-    fireEvent.click(screen.getByText('+ Add PDF'));
+    fireEvent.click(screen.getByText('+ Add PDF Files'));
     
     expect(handleAddDocuments).toHaveBeenCalledTimes(1);
   });

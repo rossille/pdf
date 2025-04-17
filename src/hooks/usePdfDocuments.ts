@@ -1,5 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type Dispatch, type SetStateAction } from 'react';
 import { newId } from '../utils/id';
 
 const idsMap = new Map<PDFDocument, number>();
@@ -29,11 +29,10 @@ export function usePdfDocuments(): {
   handleReorderDocuments: (newDocuments: PDFDocument[]) => void;
   handleDocumentSelect: (index: number) => void;
   moveDocument: (dragIndex: number, hoverIndex: number) => void;
-  setSelectedDocumentIndex: (index: number | null) => void;
+  setSelectedDocumentIndex: Dispatch<SetStateAction<number | null>>;
 } {
   const [pdfDocuments, setPdfDocuments] = useState<PDFDocument[]>([]);
   const [selectedDocumentIndex, setSelectedDocumentIndex] = useState<number | null>(null);
-
   const handleDocumentAdded = useCallback((pdfDocument: PDFDocument) => {
     setPdfDocuments((pdfDocuments) => [...pdfDocuments, pdfDocument]);
     setSelectedDocumentIndex(null);

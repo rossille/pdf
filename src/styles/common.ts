@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Box, Button } from '@mui/material';
-import { gap, pageWidth } from '../utils/spaces';
+import { gap } from '../utils/spaces';
 
 // App Layout Styles
 export const AppContainer = styled.div`
@@ -15,12 +15,16 @@ export const AppContainer = styled.div`
   padding-top: 70px;
   scrollbar-width: thin;
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-    background-color: lightgray;
+    width: 6px;
+    height: 6px;
+    background-color: rgba(240, 242, 255, 0.5);
   }
   ::-webkit-scrollbar-thumb {
-    background-color: gray;
+    background-color: rgba(67, 97, 238, 0.3);
+    border-radius: 3px;
+    &:hover {
+      background-color: rgba(67, 97, 238, 0.5);
+    }
   }
   display: flex;
   flex-direction: column;
@@ -28,9 +32,9 @@ export const AppContainer = styled.div`
   justify-content: center;
   gap: 20px;
   margin: 0;
-  padding: 0;
-  background: linear-gradient(65deg, #ffffff 0%, #eaf8ff 100%);
-  font-family: 'Inter', sans-serif;
+  padding: 0 20px;
+  background: linear-gradient(135deg, #F9FAFE 0%, #EDF1FF 50%, #E1EFFF 100%);
+  font-family: 'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif;
 `;
 
 export const FlexCenterBox = styled(Box)`
@@ -52,14 +56,28 @@ export const DocumentsListContainer = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  margin: 20px 0;
+  padding: 20px;
+  max-width: 1200px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 `;
 
 export const DocumentItemWrapper = styled.div`
   position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+
   .action-bar {
     display: none;
   }
+
   :hover {
+    transform: translateY(-5px);
+
     .action-bar {
       display: block;
     }
@@ -83,16 +101,21 @@ export const EmptyStateTitle = styled.div`
 
 // Button Styles
 export const ActionButton = styled(Button)`
-  min-width: 36px !important;
-  width: 36px;
-  height: 36px;
+  min-width: 40px !important;
+  width: 40px;
+  height: 40px;
   padding: 0 !important;
-  border-radius: 4px;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 `;
 
 export const ActionButtonsContainer = styled.div`
   position: absolute;
-  bottom: 10px;
+  bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -100,26 +123,26 @@ export const ActionButtonsContainer = styled.div`
   align-items: center;
   z-index: 10;
   background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 8px;
-  padding: 5px 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  gap: 10px;
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  gap: 12px;
 `;
 
 // Canvas Styles
 export const CanvasStyles = css`
-  border: 1px solid black;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
   cursor: move;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  background-color: white;
+
   &.dragging {
-    opacity: 0.1;
+    opacity: 0.3;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
 `;
 
-// Document Placeholder
-export const StyledPlaceholderButton = styled(Button)`
-  border: 2px dashed #aaa;
-  border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
