@@ -1,5 +1,6 @@
 import { css } from '@emotion/react'
-import { Button, Typography } from '@mui/material'
+import { AppBar, Box, Button, Dialog, DialogContent, DialogTitle, IconButton, Link, Toolbar, Typography } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useState } from 'react'
 import { DndProvider } from 'react-dnd'
@@ -11,9 +12,9 @@ import { FileInputForm } from './file-input-form'
 
 export const App = memo(function App() {
   const [pdfDocuments, setPdfDocuments] = useState<PDFDocument[]>([])
-
   const [selectedDocumentIndex, setSelectedDocumentIndex] = useState<number | null>(null)
-  
+  const [aboutDialogOpen, setAboutDialogOpen] = useState(false)
+
   const handleDocumentAdded = useCallback((pdfDocument: PDFDocument) => {
     setPdfDocuments((pdfDocuments) => [...pdfDocuments, pdfDocument])
     setSelectedDocumentIndex(null)
@@ -35,6 +36,14 @@ export const App = memo(function App() {
     input?.click();
   }, [])
 
+  const handleOpenAboutDialog = useCallback(() => {
+    setAboutDialogOpen(true)
+  }, [])
+
+  const handleCloseAboutDialog = useCallback(() => {
+    setAboutDialogOpen(false)
+  }, [])
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div
@@ -46,7 +55,7 @@ export const App = memo(function App() {
           bottom: 0;
           overflow-x: hidden;
           overflow-y: scroll;
-          padding: 20px;
+          padding-top: 70px;
           scrollbar-width: thin;
           ::-webkit-scrollbar {
             width: 5px;
@@ -67,6 +76,70 @@ export const App = memo(function App() {
           font-family: 'Inter', sans-serif;
         `}
       >
+        <AppBar position="fixed">
+          <Toolbar>
+            <Typography variant="h5" component="div" sx={{ flexGrow: 0 }}>
+              Merge PDF
+            </Typography>
+            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+              <Typography variant="subtitle1" sx={{ fontStyle: 'italic' }}>
+                Unlimited, secure, and free
+              </Typography>
+            </Box>
+            <Button color="inherit" onClick={handleOpenAboutDialog}>About</Button>
+          </Toolbar>
+        </AppBar>
+
+        <Dialog maxWidth="md" open={aboutDialogOpen} onClose={handleCloseAboutDialog}>
+          <DialogTitle>
+            About Merge PDF
+            <IconButton
+              aria-label="close"
+              onClick={handleCloseAboutDialog}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="h6" gutterBottom>
+              🛡️ Your PDFs Stay Private
+            </Typography>
+            <Typography paragraph>
+              When you use Merge PDF, your documents never leave your computer. Everything happens right in your browser,
+              so your sensitive documents aren't uploaded to any servers. It's like having a PDF workshop right on your own device!
+            </Typography>
+            <Typography paragraph>
+              Unlike many online services, we don't store copies of your files or require you to create an account.
+              Your documents remain completely in your control from start to finish.
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              ⚙️ How It Works
+            </Typography>
+            <Typography paragraph>
+              This tool uses JavaScript running in your web browser to combine your PDF files.
+              Think of it as having a PDF toolkit that runs locally - no internet connection is needed for processing once the page loads.
+            </Typography>
+
+            <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+              👋 About Me
+            </Typography>
+            <Typography paragraph>
+              Hi there! I'm Samuel Rossille, a proud husband and dad of 3. When I'm not spending time with my amazing family,
+              I'm the CTO and co-founder of <Link href="https://www.orus.eu/" target="_blank" rel="noopener">Orus</Link>,
+              where we're working on some pretty cool stuff!
+            </Typography>
+            <Typography paragraph>
+              I'm a passionate developer who loves creating useful tools like this one. If you'd like to connect,
+              feel free to find me on <Link href="https://www.linkedin.com/in/samuel-rossille-9621301b/" target="_blank" rel="noopener">LinkedIn</Link>.
+            </Typography>
+          </DialogContent>
+        </Dialog>
 
         {pdfDocuments.length === 0 ? (
           <EmptyState onAddDocuments={handleAddDocumentsClick} />
