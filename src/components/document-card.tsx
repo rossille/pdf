@@ -176,14 +176,18 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
         <div
           css={css`
             position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            transform: translateY(-50%);
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            justify-content: space-between;
-            padding: 0 5px;
+            justify-content: center;
+            align-items: center;
             z-index: 10;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 5px 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            gap: 10px;
           `}
           onClick={e => e.stopPropagation()}
         >
@@ -194,48 +198,32 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
             disabled={index === 0}
             onClick={handleMoveLeft}
             css={css`
-              min-width: 30px !important;
-              width: 60px;
-              height: 60px;
+              min-width: 36px !important;
+              width: 36px;
+              height: 36px;
               padding: 0 !important;
-              border-radius: 50%;
-              opacity: 0.9;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-              font-size: 32px;
+              border-radius: 4px;
             `}
           >
-            <Icon css={css`
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            `}><ArrowBack css={css`
-              font-size: 32px;
-            `}/></Icon>
+            <ArrowBack fontSize="small" />
           </Button>
+          
           <Button
             variant="contained"
             color="error"
             size="small"
             onClick={handleRemove}
             css={css`
-              min-width: 30px !important;
-              width: 60px;
-              height: 60px;
+              min-width: 36px !important;
+              width: 36px;
+              height: 36px;
               padding: 0 !important;
-              border-radius: 50%;
-              opacity: 0.9;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-              font-size: 32px;
+              border-radius: 4px;
             `}
           >
-            <Icon css={css`
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            `}><Clear css={css`
-              font-size: 32px;
-            `}/></Icon>
+            <Clear fontSize="small" />
           </Button>
+          
           <Button
             variant="contained"
             color="primary"
@@ -243,22 +231,14 @@ export const DocumentCard = memo<DocumentCardProps>(function DocumentCard({
             disabled={index >= totalCount - 1}
             onClick={handleMoveRight}
             css={css`
-              min-width: 30px !important;
-              width: 60px;
-              height: 60px;
+              min-width: 36px !important;
+              width: 36px;
+              height: 36px;
               padding: 0 !important;
-              border-radius: 50%;
-              opacity: 0.9;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+              border-radius: 4px;
             `}
           >
-            <Icon css={css`
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            `}><ArrowForward css={css`
-              font-size: 32px;
-            `}/></Icon>
+            <ArrowForward fontSize="small" />
           </Button>
         </div>
       )}

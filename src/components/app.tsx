@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
-import { AppBar, Box, Button, Dialog, DialogContent, DialogTitle, IconButton, Link, Toolbar, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import { AppBar, Box, Button, Dialog, DialogContent, DialogTitle, IconButton, Link, Toolbar, Typography } from '@mui/material'
 import { PDFDocument } from 'pdf-lib'
 import { memo, useCallback, useState } from 'react'
 import { DndProvider } from 'react-dnd'
@@ -83,7 +83,7 @@ export const App = memo(function App() {
             </Typography>
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
               <Typography variant="subtitle1" sx={{ fontStyle: 'italic' }}>
-                Unlimited, secure, and free
+                The elegant and secure PDF tool
               </Typography>
             </Box>
             <Button color="inherit" onClick={handleOpenAboutDialog}>About</Button>
